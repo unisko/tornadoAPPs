@@ -11,7 +11,7 @@ from tornado import web
 
 class MainHandler(web.RequestHandler):
     def get(self):
-        self.write("你好，世界！")
+        self.write("你好，世界！\n")
         
 application = web.Application([(r"/", MainHandler), ])
 
