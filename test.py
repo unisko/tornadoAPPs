@@ -7,14 +7,21 @@ Created on 2015年6月22日
 '''
 
 from tornado import ioloop
+from tornado import httpserver
+import tornado.options
+from tornado.options import options, define
 from tornado import web
 
-class MainHandler(web.RequestHandler):
-    def get(self):
-        self.write("你好，世界！\n")
-        
-application = web.Application([(r"/", MainHandler), ])
+define("port", default=8000, help="run on the given port", type=int)
 
+class IndexHandler(web.RequestHandler):
+    def get(self):
+        greeting = self.get_argument('greeting', '你好')
+        self.write(greeting + ', 亲爱的用户！')
+        
 if __name__ == "__main__":
-    application.listen(8888)
+    tornado.options.parse_command_line()
+    app = web.Application(handlers=[(r"/", IndexHandler)])
+    http_server = httpserver.HTTPServer(app)
+    http_server.listen(options.port)
     ioloop.IOLoop.instance().start()
