@@ -6,30 +6,19 @@ Created on 2015年6月22日
 @author: peng
 '''
 
-import web
-import xml.etree.ElementTree as ET
+from tornado.ioloop import IOLoop
+from tornado.web import RequestHandler, Application, url
 
-tree = ET.parse('./user_data.xml')
-root = tree.getroot()
+class HelloHandler(RequestHandler):
+    def get(self):
+        self.write("Hello, world")
 
-urls = ('/users', 'list_users',
-        '/users/(.*)', 'get_user')
+def make_app():
+    return Application([
+        url(r"/", HelloHandler),
+        ])
 
-app = web.application(urls, globals())
-
-class list_users:
-    def GET(self):
-        output = 'users:['
-        for child in root:
-            output += str(child.attrib) + ','
-        output += ']'
-        return output
-
-class get_user:
-    def GET(self, user):
-        for child in root:
-            if child.attrib['id'] == user:
-                return str(child.attrib)
-            
-if __name__ == '__main__':
-    app.run()
+def main():
+    app = make_app()
+    app.listen(8888)
+    IOLoop.current().start()
