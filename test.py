@@ -6,19 +6,15 @@ Created on 2015年6月22日
 @author: peng
 '''
 
-from tornado.ioloop import IOLoop
-from tornado.web import RequestHandler, Application, url
+from tornado import ioloop
+from tornado import web
 
-class HelloHandler(RequestHandler):
+class MainHandler(web.RequestHandler):
     def get(self):
-        self.write("Hello, world")
+        self.write("你好，世界！")
+        
+application = web.Application([(r"/", MainHandler), ])
 
-def make_app():
-    return Application([
-        url(r"/", HelloHandler),
-        ])
-
-def main():
-    app = make_app()
-    app.listen(8888)
-    IOLoop.current().start()
+if __name__ == "__main__":
+    application.listen(8888)
+    ioloop.IOLoop.instance().start()
