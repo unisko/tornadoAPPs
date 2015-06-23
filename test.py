@@ -16,7 +16,7 @@ define("port", default=8000, help="run on the given port", type=int)
 
 class IndexHandler(web.RequestHandler):
     def get(self):
-        greeting = self.get_argument('greeting', '你好')
+        greeting = self.get_argument('greeting', 'Hello')
         self.write(greeting + ', 亲爱的用户！\n')
         
 if __name__ == "__main__":
