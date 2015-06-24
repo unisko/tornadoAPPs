@@ -14,9 +14,6 @@ options.define("port", default=8000, type=int, help=u"在给定的端口上运�
 class ReverseHandler(web.RequestHandler):
     def get(self, input):
         self.write(input[::-1] + "\n")
-    
-    def post(self):
-        self.write(self.get_argument('text' + 'width'))
         
 class WrapHandler(web.RequestHandler):
     def post(self):
