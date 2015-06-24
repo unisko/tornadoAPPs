@@ -16,7 +16,7 @@ class ReverseHandler(web.RequestHandler):
         self.write(input[::-1] + "\n")
     
     def post(self):
-        self.write(self.get_argument('text' + 'width'))
+        self.write(self.get_argument('text' ) + self.get_argument('width' + "\n"))
         
 class WrapHandler(web.RequestHandler):
     def post(self):
