@@ -8,7 +8,6 @@ Created on 2015年6月24日
 
 from tornado import httpserver, ioloop, options, web
 from apsw import textwrap
-from LSC.widgets import appsview
 
 options.define("port", default=8000, type=int, help=u"在给定的端口上运行")
 
