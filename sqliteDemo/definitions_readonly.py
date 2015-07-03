@@ -18,23 +18,26 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [(r"/(\w+)", WordHandler)]
+        self.conn = sqlite3.connect(os.path.join(BASE_DIR, "example.db"))
         tornado.web.Application.__init__(self, handlers, debug=True)
 
 
 class WordHandler(tornado.web.RequestHandler):
     def get(self, word):
-        db_path = os.path.join(BASE_DIR, "example.db")
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
+        # db_path = os.path.join(BASE_DIR, "example.db")
+        cur = self.application.conn.cursor()
         sql = "SELECT definition FROM dict WHERE word = '%s'" % word
+        ret = dict()
+        ret['word'] = word
         cur.execute(sql)
-        word_doc = cur.fetchone()[0]
-        if word_doc:
-            self.write(word_doc)
+        res = cur.fetchone()
+        if res:
+            ret['definition'] = res[0]
+            self.write(ret)
         else:
             self.set_status(404)
             self.write({"error": "word not found"})
-        conn.close()
+        # self.application.conn.close()
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
