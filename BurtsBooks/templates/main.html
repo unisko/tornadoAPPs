@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>{{ page_title }}</title>
+        <line rel="stylesheet" href="{{ static_url("css/style.css") }}" >
+    </head>
+
+    <body>
+        <div id="container">
+            <header>
+                {% block header %}<h1>Burt's Books</h1>{% end %}
+            </header>
+            <div id="main">
+                <div id="content">
+                    {% block body %}{% end %}
+                </div>
+            </div>
+            <footer>
+            {% block footer %}
+                 <p>
+                    有关优选书、工作时间或活动信息, 请发邮件给：
+                    <a href="mailto:contact@burtsbooks.com">contact@burtsbooks.com</a>
+                </p>
+                <p>
+                    在脸簿上关注我们：
+                    {% raw linkify("https://fb.me/burtsbooks", extra_params='ref=website') %}
+                </p>
+
+
+                {% end %}
+            </footer>
+        </div>
+        <script src="{{ static_url("js/script.js") }}"></script>
+    </body>
+</html>
