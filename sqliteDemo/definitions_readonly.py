@@ -5,11 +5,14 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import os.path
 
 import sqlite3
 
 from tornado.options import define, options
 define("port", default=8000, help=u"在给定的端口上运行", type=int)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Application(tornado.web.Application):
@@ -20,7 +23,8 @@ class Application(tornado.web.Application):
 
 class WordHandler(tornado.web.RequestHandler):
     def get(self, word):
-        conn = sqlite3.connect('example.db')
+        db_path = os.path.join(BASE_DIR, "example.db")
+        conn = sqlite3.connect(db_path)
         cur = conn.cursor()
         sql = "SELECT definition FROM dict WHERE word = '%s'" % word
         cur.execute(sql)
