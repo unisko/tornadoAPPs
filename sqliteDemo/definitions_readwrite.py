@@ -38,6 +38,23 @@ class WordHandler(tornado.web.RequestHandler):
             self.write({"error": "word not found"})
         # self.application.conn.close()
 
+    def post(self, word):
+        definition = self.get_argument("definition")
+        sql = "SELECT definition FROM dict WHERE word = '%s'" % word
+        self.application.cur.execute(sql)
+        output = dict()
+        output["word"] = word
+        output["definition"] = definition
+        res = self.application.cur.fetchone()
+        if res:
+            sql = "UPDATE dict SET definition = '%s' WHERE word = \
+                    '%s'" % (definition, word)
+            self.application.cur.execute(sql)
+        else:
+            sql = "INSERT INTO dict VALUES ('%s', '%s')" % (word, definition)
+            self.application.cur.execute(sql)
+        self.write(output)
+
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
