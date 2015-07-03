@@ -1,29 +1,22 @@
 #!/usr/bin/env python2.7
-<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
-=======
-# -*-coding: utf-8-*-
->>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
 import os.path
 import random
 
 import tornado.httpserver
-<<<<<<< HEAD
 import tornado.ioloop
 import tornado.options
 import tornado.web
 
 from tornado.options import define, options
 define("port", default=8000, help=u"运行在给定端口", type=int)
-=======
 import tornado.web
 import tornado.ioloop
 import tornado.options
 
 from tornado.options import define, options
 define("port", default=8001, help="run on the given port", type=int)
->>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -36,7 +29,6 @@ class MungedPageHandler(tornado.web.RequestHandler):
         mapped = dict()
         for line in text.split('\r\n'):
             for word in [x for x in line.split(' ') if len(x) > 0]:
-<<<<<<< HEAD
                 if word[0] not in mapped:
                     mapped[word[0]] = []
                     mapped[word[0]].append(word)
@@ -45,10 +37,9 @@ class MungedPageHandler(tornado.web.RequestHandler):
                         mapped[word[0]] = []
                     else:
                         mapped[word[0]].append(word)
-=======
+                        
                 if word[0] not in mapped: mapped[word[0]] = []
                 mapped[word[0]].append(word)
->>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
         return mapped
 
     def post(self):
@@ -57,27 +48,17 @@ class MungedPageHandler(tornado.web.RequestHandler):
         source_map = self.map_by_first_letter(source_text)
         change_lines = text_to_change.split('\r\n')
         self.render('munged.html', source_map=source_map,
-<<<<<<< HEAD
                 change_lines=change_lines, choice=random.choice,
                 mapped=source_map)
 
 
-if __name__ == "__main__":
-=======
-                change_lines=change_lines, choice=random.choice, mapped=source_map)
-
 if __name__ == '__main__':
->>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
     tornado.options.parse_command_line()
     app = tornado.web.Application(
         handlers=[(r'/', IndexHandler), (r'/poem', MungedPageHandler)],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),
-<<<<<<< HEAD
         debug=True
-=======
-        debug=False
->>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
