@@ -1,6 +1,12 @@
 body {
+<<<<<<< HEAD
 font-family: Helvetica,Arial,sans-serif;
 width: 600px;
 margin: 0 auto;
+=======
+    font-family: Helvetica,Arial,sans-serif;
+    width: 600px;
+    margin: 0 auto;
+>>>>>>> 6162f6419ee4e16a6170c011b3f2b7081a08c6cc
 }
 .replaced:hover { color: #00f; }
