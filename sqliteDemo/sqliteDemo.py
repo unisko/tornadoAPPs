@@ -27,4 +27,5 @@ for row in cur.execute(sqlstr):
     
     results.append(result)
         
-print results
+for res in results:
+   print json.dumps(res)
