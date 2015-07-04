@@ -15,10 +15,20 @@ define("port", default=8000, help=u"在给定的端口上运行", type=int)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+def _dict_factory(cursor, row):
+    '''将sqlite 数据库连接的row_factory方法由默认，重写为此方法'''
+    d = dict()
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
 def _execute(query):
     '''用于执行到一个本地sqlite数据库的查询'''
     dbPath = os.path.join(BASE_DIR, 'example.db')
     conn = sqlite3.connect(dbPath)
+#  用上面定义的_dict_factory重写conn.row_factory
+    conn.row_factory = _dict_factory
     cursorobj = conn.cursor()
     try:
         cursorobj.execute(query)
@@ -39,12 +49,9 @@ class Application(tornado.web.Application):
 class WordHandler(tornado.web.RequestHandler):
     def get(self, word):
         sql = "SELECT definition FROM dict WHERE word = '%s'" % word
-        ret = dict()
-        ret['word'] = word
         res = _execute(sql)
         if res:
-            ret['definition'] = res[0][0]
-            self.write(ret)
+            self.write(res[0])
         else:
             self.set_status(404)
             self.write({"error": "word not found"})

@@ -22,10 +22,9 @@ results = list()
 
 for row in cur.execute(sqlstr):
     result = dict()
-    for i  in range(5):
+    for i in range(5):
         result[names[i]] = row[i]
-    
     results.append(result)
-        
+
 for res in results:
-   print json.dumps(res)
+    print json.dumps(res)

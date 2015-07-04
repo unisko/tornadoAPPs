@@ -67,7 +67,9 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", MainHandler),
-            (r"/recommended/", RecommendedHandler)
+            (r"/recommended/", RecommendedHandler),
+            (r"/edit/([0-9Xx\-]+)", BookEditHandler),
+            (r"/add", BookEditHandler)
         ]
 
         settings = dict(
@@ -100,6 +102,46 @@ class RecommendedHandler(tornado.web.RequestHandler):
             header_text="推荐读物",
             books=books
         )
+
+
+class BookEditHandler(tornado.web.RequestHandler):
+    def get(self, isbn=None):
+        book = dict()
+        if isbn:
+            sql = "SELECT * FROM books WHERE isbn = '%s'" % isbn
+            book = _execute(sql)[0]
+        self.render(
+            "book_edit.html",
+            page_title="Burt's Books",
+            header_text="编辑书籍",
+            book=book
+        )
+
+    def post(self, isbn=None):
+        import time
+        book_fields = ['isbn', 'title', 'subtitle', 'images',
+                'author', 'date_released', 'description']
+        book = dict()
+        if isbn:
+            sql = "SELECT * FROM books WHERE isbn = '%s'" % isbn
+            book = _execute(sql)[0]
+        for key in book_fields:
+            book[key] = self.get_argument(key, None)
+
+        if isbn:
+            sql = "UPDATE books SET isbn = '%s' title = '%s' \
+                    subtitle = '%s' images = '%s' author = '%s' \
+                    date_released = '%s', description = '%s' WHERE \
+                    isbn = ?" % tuple(book[k] for k in book_fields)
+            _execute(sql, (isbn, ))
+        else:
+            book['date_added'] = int(time.time())
+            sql = "UPDATE books SET isbn = '%s' title = '%s' \
+                subtitle = '%s' images = '%s' author = '%s' \
+                date_released = '%s', description = '%s' WHERE \
+                isbn = ?" % tuple(book[k] for k in book_fields)
+            _execute(sql, (isbn, ))
+        self.redirect("/recommended/")
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
