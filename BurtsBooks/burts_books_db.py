@@ -6,9 +6,28 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import os.path
-
+import tornado.auth
+import tornado.escape
 from tornado.options import define, options
+import sqlite3
+
 define("port", default=8000, help="在指定端口上运行", type=int)
+
+
+def _execute(query):
+    '''用于执行到一个本地sqlite数据库的查询'''
+    dbPath = os.path.join(BASE_DIR, 'example.db')
+    conn = sqlite3.connect(dbPath)
+    cursorobj = conn.cursor()
+    try:
+        cursorobj.execute(query)
+        result = cursorobj.fetchall()
+        conn.commit()
+    except:
+        raise
+    conn.close()
+    return result
+
 
 
 class BookModule(tornado.web.UIModule):
@@ -36,7 +55,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", MainHandler),
-            (r"/recommendings", RecommendedHandler)
+            (r"/recommended/", RecommendedHandler)
         ]
 
         settings = dict(
@@ -52,7 +71,6 @@ class Application(tornado.web.Application):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-
         self.render(
             "index.html",
             page_title="Burt's Books | Home",
@@ -66,28 +84,7 @@ class RecommendedHandler(tornado.web.RequestHandler):
             "recommended.html",
             page_title="Burt's Books | 推荐读物",
             header_text="推荐读物",
-            books=[
-                {
-                    "title": "Programming Collective Intelligence",
-                    "subtitle": "Building Smart Web 2.0 Applications",
-                    "image": "/static/images/collective_intelligence.gif",
-                    "author": "Toby Segaran",
-                    "date_added": 1310248056,
-                    "date_released": "August 2007",
-                    "isbn": "978-0-596-52932-1",
-                    "description":
-                    '''
-                    <p>This fascinating book demonstrates how you
-                    can build web applications to mine the enormous amount of
-                    data created by people on the Internet. With the
-                    sophisticated algorithms in this book, you can write smart
-                    programs to access interesting datasets from other web
-                    sites, collect data from users of your own
-                    applications, and analyze and understand the data once
-                    you've found it.</p>
-                    '''
-                }
-            ]
+            books=books
         )
 
 if __name__ == "__main__":
